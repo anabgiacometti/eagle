@@ -1,0 +1,261 @@
+{% extends '_layouts/base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+	<div class="col-11 p-5">
+		<div class="row justify-content-between">
+			<div class="col-auto">
+				<h1 class="display-6">{{title}}</h1>
+			</div>
+			<div class="col-auto">
+				<button class="btn btn-primary btn-lg" type="submit" form="company_form">Salvar</button>
+				<a href="{% url 'company-list' %}" class="btn btn-lg btn-secondary">Voltar</a>
+			</div>
+		</div>
+		<div class="jumbotron py-4">
+
+			{% if messages %}
+			<div class="alert alert-dismissible alert-success">
+				{% for message in messages %}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				{{ message|safe }}
+				{% endfor %}
+			</div>
+			{% endif %}
+			
+			<form action="{% url 'company-detail' %}" method="POST" id="company_form">
+
+				{% csrf_token %}
+
+				{{form.id}}
+
+				<div class="form-row">
+
+					<div class="form-group col-md-1 col-lg-1">
+						<label for="code">Código *</label>
+						<input type="text" class="form-control {% if form.code.errors %} is-invalid {% endif %}" id="code" value="{{form.code.value|default_if_none:''}}" name="code" placeholder="Código">
+						{% for error in form.code.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>			
+					
+					<div class="form-group col-md col-lg">
+						<label>Tipo de Empresa *</label><br>
+						<select class="custom-select mr-2 {% if form.company_type.errors %} is-invalid {% endif %}" name='company_type' id='company_type'>
+							<option value="">Selecione</option>
+							{% for value, text in form.company_type.field.choices %}
+							<option {% if form.company_type.value == value %} selected="" {% endif %} value="{{value}}">{{text}}</option>
+							{% endfor %}							
+						</select>
+						{% for error in form.company_type.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-md col-lg">
+						<label>Matriz</label><br>
+						<select class="custom-select mr-2 {% if form.company_headoffice.errors %} is-invalid {% endif %}" name='company_headoffice' id='company_headoffice'>
+							<option value="">Selecione</option>
+							{% for value, text in form.company_headoffice.field.choices %}
+							<option {% if form.company_headoffice.value.id == value %} selected="" {% endif %} value="{{value}}">{{text}}</option>
+							{% endfor %}							
+						</select>
+						{% for error in form.company_headoffice.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>								
+
+				</div>
+
+				<div class="form-row">
+
+					<div class="form-group col-md col-lg">
+						<label for="name">CNPJ *</label>
+						<input type="text" class="form-control {% if form.cnpj.errors %} is-invalid {% endif %}" id="cnpj" value="{{form.cnpj.value|default_if_none:''}}" name="cnpj" placeholder="CNPJ">
+						{% for error in form.cnpj.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-md col-lg">
+						<label for="ie">Inscrição Estadual *</label>
+						<input type="text" class="form-control {% if form.ie.errors %} is-invalid {% endif %}" id="ie" value="{{form.ie.value|default_if_none:''}}" name="ie" placeholder="Inscrição Estadual">
+						{% for error in form.ie.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+				</div>
+
+				<div class="form-row">
+
+					<div class="col form-group">
+
+						<div class="custom-control custom-checkbox">
+							{% if form.has_exemptiom_ie.value %}
+							<input type="checkbox" class="custom-control-input" id="has_exemptiom_ie" name="has_exemptiom_ie" checked="">
+							{% else %}
+							<input type="checkbox" class="custom-control-input" id="has_exemptiom_ie" name="has_exemptiom_ie">
+							{% endif %}
+							<label class="custom-control-label" for="has_exemptiom_ie">Isento de Inscrição Estadual</label>
+						</div>
+
+					</div>
+
+				</div>
+
+				<div class="form-row">
+
+					<div class="form-group col-md col-lg">
+						<label for="name">Razão Social *</label>
+						<input type="text" class="form-control {% if form.bussiness_name.errors %} is-invalid {% endif %}" id="bussiness_name" value="{{form.bussiness_name.value|default_if_none:''}}" name="bussiness_name" placeholder="Razão Social">
+						{% for error in form.bussiness_name.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-md col-lg">
+						<label for="company_name">Nome Fantasia *</label>
+						<input type="text" class="form-control {% if form.company_name.errors %} is-invalid {% endif %}" id="company_name" value="{{form.company_name.value|default_if_none:''}}" name="company_name" placeholder="Nome Fantasia">
+						{% for error in form.company_name.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+				</div>
+
+				<div class="form-row">
+
+					<div class="form-group col-md-6 col-lg-6">
+						<label>Regime Tributário *</label><br>
+						<select class="custom-select mr-2 {% if form.company_tax_type.errors %} is-invalid {% endif %}" name='company_tax_type'>
+							<option value="">Selecione</option>
+							{% for value, text in form.company_tax_type.field.choices %}
+							<option {% if form.company_tax_type.value == value %} selected="" {% endif %} value="{{value}}">{{text}}</option>
+							{% endfor %}							
+						</select>
+						{% for error in form.company_tax_type.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>									
+
+				</div>
+
+				<hr>
+
+				<div class="form-row">
+
+					<div class="form-group col-md col-lg">
+						<label for="name">CEP</label>
+						<input type="text" class="form-control {% if form.post_code.errors %} is-invalid {% endif %}" id="post_code" value="{{form.post_code.value|default_if_none:''}}" name="post_code" placeholder="CEP">
+						{% for error in form.post_code.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-md col-lg">
+						<label>Estado</label><br>
+						<select class="custom-select mr-2 {% if form.state.errors %} is-invalid {% endif %}" name='state'>
+							<option value="">Selecione</option>
+							{% for value, text in form.state.field.choices %}
+							<option {% if form.state.value == value %} selected="" {% endif %} value="{{value}}">{{text}}</option>
+							{% endfor %}							
+						</select>
+						{% for error in form.state.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>			
+
+					<div class="form-group col-md col-lg">
+						<label for="city">Cidade</label>
+						<input type="text" class="form-control {% if form.city.errors %} is-invalid {% endif %}" id="city" value="{{form.city.value|default_if_none:''}}" name="city" placeholder="Cidade">
+						{% for error in form.city.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-md col-lg">
+						<label for="district">Bairro</label>
+						<input type="text" class="form-control {% if form.district.errors %} is-invalid {% endif %}" id="district" value="{{form.district.value|default_if_none:''}}" name="district" placeholder="Bairro">
+						{% for error in form.district.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+				</div>
+
+				<div class="form-row">
+
+					<div class="form-group col-md-6 col-lg-6">
+						<label for="name">Endereço</label>
+						<input type="text" class="form-control {% if form.address.errors %} is-invalid {% endif %}" id="post_code" value="{{form.address.value|default_if_none:''}}" name="address" placeholder="Endereço">
+						{% for error in form.address.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-md-1 col-lg-1">
+						<label for="company_name">Número</label>
+						<input type="text" class="form-control {% if form.number.errors %} is-invalid {% endif %}" id="number" value="{{form.number.value|default_if_none:''}}" name="number" placeholder="Nro">
+						{% for error in form.number.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-md col-lg">
+						<label for="company_name">Complemento</label>
+						<input type="text" class="form-control {% if form.complement.errors %} is-invalid {% endif %}" id="complement" value="{{form.complement.value|default_if_none:''}}" name="complement" placeholder="Complemento">
+						{% for error in form.complement.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+	<script type="text/javascript">
+
+		function CheckIE(){
+			if($('#has_exemptiom_ie').prop('checked')){
+				$('#ie').val('')
+				$('#ie').prop('disabled', true)
+			}else {
+				$('#ie').prop('disabled', false)
+			}
+		} 
+
+		function CheckCompanyType(){
+			if($('#company_type').val() == 'branch'){
+				$('#company_headoffice').prop('disabled', false)
+			}else{
+				$('#company_headoffice').prop('disabled', true)
+				$('#company_headoffice').val('')
+			}
+		}
+
+		$(document).ready(function(){
+			CheckIE()
+			CheckCompanyType()
+			$('#code').mask('AAA')
+			$('#cnpj').mask('00.000.000/0000-00')
+			$('#ie').mask('000.000.000.000')
+			$('#post_code').mask('00000-000')
+			$('#number').mask('000000000')
+		})
+
+		$('#has_exemptiom_ie').change(function(){
+			CheckIE()
+		})
+
+		$('#company_type').change(function(){
+			CheckCompanyType()
+		})
+
+	</script>
+
+	{% endblock %}

@@ -1,0 +1,75 @@
+{% extends '_layouts/base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+	<div class="col-11 p-5">
+		<div class="row justify-content-between">
+			<div class="col-auto">
+				<h1 class="display-6">{{title}}</h1>
+			</div>
+			<div class="col-auto">
+				<button class="btn btn-primary btn-lg" type="submit" form="warehouse_form">Salvar</button>
+				<a href="{% url 'warehouse-list' %}" class="btn btn-lg btn-secondary">Voltar</a>
+			</div>
+		</div>
+		<div class="jumbotron py-4">
+
+			{% if messages %}
+			<div class="alert alert-dismissible alert-success">
+				{% for message in messages %}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				{{ message|safe }}
+				{% endfor %}
+			</div>
+			{% endif %}
+			
+			<form action="{% url 'warehouse-detail' %}" method="POST" id="warehouse_form">
+
+				{% csrf_token %}
+
+				{{form.id}}
+
+				<div class="form-row">
+					
+					<div class="form-group col">
+						<label for="full_name">Nome *</label>
+						<input type="text" class="form-control {% if form.name.errors %} is-invalid {% endif %}" id="full_name" value="{{form.name.value|default_if_none:''}}" name="name" placeholder="Nome">
+						{% for error in form.name.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+				</div>
+
+				<div class="form-group">
+					<label for="costcenters">Permissões</label>
+
+					<div class="row">
+
+						{% for value, text in form.permissions.field.choices %}
+
+						<div class="col-3 mb-2">
+
+							<div class="custom-control custom-checkbox">
+								{% if value in form.permissions.value %}
+								<input type="checkbox" class="custom-control-input" value="{{value}}" id="{{value}}" name="permissions" checked="">
+								{% else %}
+								<input type="checkbox" class="custom-control-input" value="{{value}}" id="{{value}}" name="permissions">
+								{% endif %}
+								<label class="custom-control-label" for="{{value}}">{{text}}</label>
+							</div>
+
+						</div>
+
+						{% endfor %}
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+	{% endblock %}

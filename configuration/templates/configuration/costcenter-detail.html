@@ -1,0 +1,145 @@
+{% extends '_layouts/base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+	<div class="col-11 p-5">
+		<div class="row justify-content-between">
+			<div class="col-auto">
+				<h1 class="display-6">{{title}}</h1>
+			</div>
+			<div class="col-auto">
+				<button class="btn btn-primary btn-lg" type="submit" form="costcenter_form">Salvar</button>
+				<a href="{% url 'costcenter-list' %}" class="btn btn-lg btn-secondary">Voltar</a>
+			</div>
+		</div>
+		<div class="jumbotron py-4">
+
+			{% if messages %}
+			<div class="alert alert-dismissible alert-success">
+				{% for message in messages %}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				{{ message|safe }}
+				{% endfor %}
+			</div>
+			{% endif %}
+			
+			<form action="{% url 'costcenter-detail' %}" method="POST" id="costcenter_form">
+
+				{% csrf_token %}
+
+				{{form.id}}
+
+				<div class="form-row">
+
+					<div class="form-group col-md col-lg">
+						<label>Empresa *</label><br>
+						<select class="custom-select mr-2 {% if form.company.errors %} is-invalid {% endif %}" name='company' id='company'>
+							<option value="">Selecione</option>
+							{% for value, text in form.company.field.choices %}
+							<option {% if form.company.value == value %} selected="" {% endif %} value="{{value}}">{{text}}</option>
+							{% endfor %}							
+						</select>
+						{% for error in form.company.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					
+					<div class="form-group col-md-6 col-lg-6">
+						<label>Tipo *</label><br>
+						<select class="custom-select mr-2 {% if form.costcenter_type.errors %} is-invalid {% endif %}" name='costcenter_type' id='costcenter_type'>
+							<option value="">Selecione</option>
+							{% for value, text in form.costcenter_type.field.choices %}
+							<option {% if form.costcenter_type.value == value %} selected="" {% endif %} value="{{value}}">{{text}}</option>
+							{% endfor %}							
+						</select>
+						{% for error in form.costcenter_type.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>					
+
+				</div>
+
+				<div class="form-row">
+
+					<div class="form-group col-md-auto col-lg-auto">
+						<label for="code">Código *</label>
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<span class="input-group-text" id="preffix"></span>
+							</div>
+							<input type="text" class="form-control {% if form.code.errors %} is-invalid {% endif %}" id="code" value="{{form.code.value|default_if_none:''}}" name="code" placeholder="Código" style='width:120px'>
+						</div>
+						{% for error in form.code.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+
+					</div>			
+
+					<div class="form-group col-md col-lg">
+						<label for="name">Nome *</label>
+						<input type="text" class="form-control {% if form.name.errors %} is-invalid {% endif %}" id="name" value="{{form.name.value|default_if_none:''}}" name="name" placeholder="Nome">
+						{% for error in form.name.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>			
+
+				</div>
+
+				<div class="form-group">
+					<label for="warehouses">Depósitos</label>
+
+					<div class="row">
+
+						{% for value, text in form.warehouses.field.choices %}
+
+						<div class="col-3 mb-2">
+
+							<div class="custom-control custom-checkbox">
+								{% if value in form.warehouses.value %}
+								<input type="checkbox" class="custom-control-input" value="{{value}}" id="{{value}}" name="warehouses" checked="">
+								{% else %}
+								<input type="checkbox" class="custom-control-input" value="{{value}}" id="{{value}}" name="warehouses">
+								{% endif %}
+								<label class="custom-control-label" for="{{value}}">{{text}}</label>
+							</div>
+
+						</div>
+
+						{% endfor %}
+
+					</div>
+				</div>
+
+			</form>
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+
+	function GetPreffix(){
+		company = $('#company').val()
+		if(company){
+			$.get("/config/company/search/" + company, function(result){
+				$('#preffix').html(result[0].code)
+			})
+		} else {
+				$('#preffix').html('')
+		}
+	} 
+
+	$('#company').change(function(){
+		GetPreffix()
+	})
+
+
+	$('document').ready(function(){
+		GetPreffix()
+	})
+
+</script>
+
+{% endblock %}

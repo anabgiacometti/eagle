@@ -1,0 +1,352 @@
+{% extends '_layouts/base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+	<div class="col-11 p-5">
+		<div class="row justify-content-between">
+			<div class="col-auto">
+				<h1 class="display-6">{{title}}</h1>
+			</div>
+			<div class="col-auto">
+				<button class="btn btn-primary btn-lg" type="submit" form="function_form">Salvar</button>
+				<a href="{% url 'function-list' %}" class="btn btn-lg btn-secondary">Voltar</a>
+			</div>
+		</div>
+		<div class="jumbotron py-4">
+
+			{% if messages %}
+			<div class="alert alert-dismissible alert-success">
+				{% for message in messages %}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				{{ message|safe }}
+				{% endfor %}
+			</div>
+			{% endif %}
+			
+			<form action="{% url 'function-detail' %}" method="POST" id="function_form">
+
+				{% csrf_token %}
+
+				{{form.id}}
+
+				<div class="form-row">
+					
+					<div class="form-group col-md col-lg">
+						<label for="name">Nome *</label>
+						<input type="text" class="form-control {% if form.name.errors %} is-invalid {% endif %}" id="full_name" value="{{form.name.value|default_if_none:''}}" name="name" placeholder="Nome">
+						{% for error in form.name.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-md col-lg">
+						<label>Nível *</label><br>
+						<select class="custom-select mr-2 {% if form.level.errors %} is-invalid {% endif %}" name='level'>
+							<option value="">Selecione</option>
+							{% for value, text in form.level.field.choices %}
+							<option {% if form.level.value == value %} selected="" {% endif %} value="{{value}}">{{text}}</option>
+							{% endfor %}							
+						</select>
+						{% for error in form.level.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+				</div>
+
+				<div class="form-row">
+					
+					<div class="form-group col-lg-3 col-md-6">
+						<label for="salary">Salário *</label>
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<span class="input-group-text">R$</span>
+							</div>
+							<input type="text" class="form-control {% if form.salary.errors %} is-invalid {% endif %}" id="salary" value="{{form.salary.value|default_if_none:''}}" 
+							name="salary" placeholder="0,00">
+						</div>
+						{% for error in form.salary.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+				</div>
+
+				<hr class="p-2 m-2">
+
+				<div class="form-group">
+					<label for="permissions">Dias Trabalhados</label>
+
+					<div class="row mt-3">
+
+						{% for value, text in form.work_days.field.choices %}
+
+						<div class="col">
+
+							<div class="custom-control custom-checkbox">
+								{% if value in form.work_days.value %}
+								<input type="checkbox" class="custom-control-input" value="{{value}}" id="{{value}}" name="work_days" checked="">
+								{% else %}
+								<input type="checkbox" class="custom-control-input" value="{{value}}" id="{{value}}" name="work_days">
+								{% endif %}
+								<label class="custom-control-label" for="{{value}}">{{text}}</label>
+							</div>
+
+						</div>
+
+						{% endfor %}
+
+					</div>
+				</div>
+
+				<hr class="p-2 m-2">
+
+				<!-- <div class="form-group">
+
+					<div class="row">
+
+						<div class="col">
+
+							<div class="custom-control custom-checkbox">
+								{% if form.flexible_schedule.value %}
+								<input type="checkbox" class="custom-control-input" id="flexible_schedule" name="flexible_schedule" checked="">
+								{% else %}
+								<input type="checkbox" class="custom-control-input" id="flexible_schedule" name="flexible_schedule">
+								{% endif %}
+								<label class="custom-control-label" for="flexible_schedule">Horário Flexível</label>
+							</div>
+
+						</div>
+
+					</div>
+				</div>
+
+				<div class="form-row">
+					
+					<div class="form-group col-3">
+						<label for="workload">Carga Horária</label>
+						<div class="input-group mb-3">
+							<input type="text" class="form-control {% if form.workload.errors %} is-invalid {% endif %}" id="workload" value="{{form.workload.value|default_if_none:''}}" name="workload" placeholder="00:00">
+							<div class="input-group-append">
+								<span class="input-group-text" id="basic-addon2">horas/semana</span>
+							</div>
+						</div>
+						{% for error in form.workload.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-3">
+						<label for="entry_hour">Horário de Entrada</label>
+						<input type="text" class="form-control flx_op {% if form.entry_hour.errors %} is-invalid {% endif %}" id="entry_hour" value="{{form.entry_hour.value|default_if_none:''}}" name="entry_hour" placeholder="00:00">
+						{% for error in form.entry_hour.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-3">
+						<label for="exit_hour">Horário de Saída</label>
+						<input type="text" class="form-control flx_op {% if form.exit_hour.errors %} is-invalid {% endif %}" id="exit_hour" value="{{form.exit_hour.value|default_if_none:''}}" name="exit_hour" placeholder="00:00">
+						{% for error in form.exit_hour.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-3">
+						<label for="lunch_time">Tempo de Almoço</label>
+						<div class="input-group mb-3">
+							<input type="text" class="form-control {% if form.lunch_time.errors %} is-invalid {% endif %}" id="lunch_time" value="{{form.lunch_time.value|default_if_none:''}}" name="lunch_time" placeholder="00:00">
+							<div class="input-group-append">
+								<span class="input-group-text" id="basic-addon2">horas/dia</span>
+							</div>
+						</div>
+						{% for error in form.lunch_time.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+				</div>
+
+				<hr class="p-2 m-2">
+ -->
+				<div class="form-group">
+
+					<div class="row">
+
+						<div class="col">
+
+							<div class="custom-control custom-checkbox">
+								{% if form.has_commission.value %}
+								<input type="checkbox" class="custom-control-input" id="has_commission" name="has_commission" checked="">
+								{% else %}
+								<input type="checkbox" class="custom-control-input" id="has_commission" name="has_commission">
+								{% endif %}
+								<label class="custom-control-label" for="has_commission">Comissão</label>
+							</div>
+
+						</div>
+
+					</div>
+				</div>		
+
+				<div class="form-row">
+
+					<div class="form-group col-3">
+						<label for="comission_percentage">Percentual Comissão</label>
+						<div class="input-group mb-3">
+							<input type="text" class="form-control comission {% if form.comission_percentage.errors %} is-invalid {% endif %}" id="comission_percentage" value="{{form.comission_percentage.value|default_if_none:''}}" name="comission_percentage" placeholder="0,00">
+							<div class="input-group-append">
+								<span class="input-group-text" id="basic-addon2">%</span>
+							</div>
+						</div>
+						{% for error in form.comission_percentage.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					
+						
+					</div>
+
+					<div class="form-group col-3">
+						<label for="comission_floor">Teto de Comissão</label>
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<span class="input-group-text">R$</span>
+							</div>
+							<input type="text" class="form-control comission {% if form.comission_floor.errors %} is-invalid {% endif %}" id="comission_floor" value="{{form.comission_floor.value|default_if_none:''}}" name="comission_floor" placeholder="0,00">
+						</div>
+						{% for error in form.comission_floor.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-3">
+						<label for="comission_ceil">Piso de Comissão</label>
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<span class="input-group-text">R$</span>
+							</div>
+							<input type="text" class="form-control comission {% if form.comission_ceil.errors %} is-invalid {% endif %}" id="comission_ceil" value="{{form.comission_ceil.value|default_if_none:''}}" name="comission_ceil" placeholder="0,00">
+						</div>
+						{% for error in form.comission_ceil.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+				</div>
+
+				<hr class="p-2 m-2">
+
+				<div class="form-group">
+					<label for="departments">Departamentos</label>
+
+					<div class="row">
+
+						{% for value, text in form.departments.field.choices %}
+
+						<div class="col-3 mb-2">
+
+							<div class="custom-control custom-checkbox">
+								{% if value in form.departments.value %}
+								<input type="checkbox" class="custom-control-input" value="{{value}}" id="{{value}}" name="departments" checked="">
+								{% else %}
+								<input type="checkbox" class="custom-control-input" value="{{value}}" id="{{value}}" name="departments">
+								{% endif %}
+								<label class="custom-control-label" for="{{value}}">{{text}}</label>
+							</div>
+
+						</div>
+
+						{% endfor %}
+
+					</div>
+				</div>
+
+				<hr class="p-2 m-2">
+
+				<div class="form-group">
+					<label for="permissions">Permissões</label>
+
+					<div class="row">
+
+						{% for value, text in form.permissions.field.choices %}
+
+						<div class="col-3 mb-2">
+
+							<div class="custom-control custom-checkbox">
+								{% if value in form.permissions.value %}
+								<input type="checkbox" class="custom-control-input" value="{{value}}" id="{{value}}" name="permissions" checked="">
+								{% else %}
+								<input type="checkbox" class="custom-control-input" value="{{value}}" id="{{value}}" name="permissions">
+								{% endif %}
+								<label class="custom-control-label" for="{{value}}">{{text}}</label>
+							</div>
+
+						</div>
+
+						{% endfor %}
+
+					</div>
+				</div>
+
+
+
+
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+
+		function CheckForFlexibleSchedule(){
+			if ($('#flexible_schedule').prop('checked')){
+				$('.flx_op').removeClass('is-invalid')
+				$('.flx_op').parent().find('p').remove()
+			}
+		}
+
+		function CheckForComission(){
+			if ($('#has_commission').prop('checked')){
+				$('.comission').attr('disabled', false)
+			} else {
+				$('.comission').attr('disabled', true)
+				$('.comission').removeClass('is-invalid')
+				$('.comission').parent().find('p').remove()
+				$('.comission').val('')
+			}
+		}
+		$('#has_commission').change(function(){
+			CheckForComission()
+		})
+
+		$(document).ready(function(){
+			CheckForComission()
+			$('#salary').maskMoney({
+				thousands: '.', 
+				decimal: ','
+			});
+			$('#comission_percentage').maskMoney({
+				thousands: '.', 
+				decimal: ','
+			});
+			$('#comission_floor').maskMoney({
+				thousands: '.', 
+				decimal: ','
+			});
+			$('#comission_ceil').maskMoney({
+				thousands: '.', 
+				decimal: ','
+			});
+			$('#workload').mask('00:00')
+			$('#entry_hour').mask('00:00')
+			$('#exit_hour').mask('00:00')
+			$('#lunch_time').mask('00:00')
+		})
+
+		$('#flexible_schedule').change(function(){
+			CheckForFlexibleSchedule()
+		})
+	</script>
+
+
+	{% endblock %}

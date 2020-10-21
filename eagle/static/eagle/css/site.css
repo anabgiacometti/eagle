@@ -1,0 +1,14 @@
+.search-input {
+    position: relative;
+}
+.search-input input[type=text] {
+    width: 100%;
+    padding-right: 123px;
+}
+.search-input .input-group-prepend {
+    position: absolute;
+    right: 4px;
+    top: 4px;
+    bottom: 4px;
+    z-index:9;
+}

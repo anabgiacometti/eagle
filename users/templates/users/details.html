@@ -1,0 +1,122 @@
+{% extends '_layouts/base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+	<div class="col-11 p-5">
+		<div class="row justify-content-between">
+			<div class="col-auto">
+				<h1 class="display-6">{{title}}</h1>
+			</div>
+			<div class="col-auto">
+				<button class="btn btn-primary btn-lg" type="submit" form="user_form">Salvar</button>
+				<a href="{% url 'user-list' %}" class="btn btn-lg btn-secondary">Voltar</a>
+			</div>
+		</div>
+		<div class="jumbotron py-4">
+
+			{% if messages %}
+			<div class="alert alert-dismissible alert-success">
+				{% for message in messages %}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				{{ message|safe }}
+				{% endfor %}
+			</div>
+			{% endif %}
+			
+			<form action="{% url 'user-detail' %}" method="POST" id="user_form">
+
+				{% csrf_token %}
+
+				{{form.id}}
+
+				<div class="form-row">
+
+					<div class="form-group col">
+						<label for="full_name">Nome Completo</label>
+						{% if form.full_name.errors %}
+						<input type="text" class="form-control is-invalid" id="full_name" value="{{form.full_name.value|default_if_none:''}}" name="full_name" placeholder="Nome Completo">
+						{% else %}
+						<input type="text" class="form-control" id="full_name" value="{{form.full_name.value|default_if_none:''}}" name="full_name" placeholder="Nome Completo">
+						{% endif %}
+						{% for error in form.full_name.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+				</div>
+
+				<div class="form-row">
+					
+					<div class="form-group col">
+						<label for="username">Nome de Usuário</label>
+						{% if form.username.errors %}
+						<input type="text" class="form-control is-invalid" id="username" value="{{form.username.value|default_if_none:''}}" name="username" placeholder="Nome de Usuário">
+						{% else %}
+						<input type="text" class="form-control" id="username" value="{{form.username.value|default_if_none:''}}" name="username" placeholder="Nome de Usuário">
+						{% endif %}
+						{% for error in form.username.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col">
+						<label for="email">E-mail</label>
+						{% if form.email.errors %}
+						<input type="text" class="form-control is-invalid" id="email" value="{{form.email.value|default_if_none:''}}" name="email" placeholder="E-mail">
+						{% else %}
+						<input type="text" class="form-control" id="email" value="{{form.email.value|default_if_none:''}}" name="email" placeholder="E-mail">
+						{% endif %}
+						{% for error in form.email.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+				</div>
+
+				<div class="form-group">
+					<div class="custom-control custom-checkbox">
+						{% if form.is_admin.value %}
+						<input type="checkbox" class="custom-control-input" name='is_admin' id="is_admin" checked="">
+						{% else %}
+						<input type="checkbox" class="custom-control-input" name='is_admin' id="is_admin">
+						{% endif %}
+						<label class="custom-control-label" for="is_admin">Administrador</label>
+					</div>
+				</div>
+
+				<hr>
+
+
+				<div class="form-group">
+					<label for="permissions">Permissões</label>
+
+					<div class="row">
+
+						{% for value, text in form.permissions.field.choices %}
+
+						<div class="col">
+
+							<div class="custom-control custom-checkbox">
+								{% if value in form.permissions.value %}
+								<input type="checkbox" class="custom-control-input" value="{{value}}" id="{{value}}" name="permissions" checked="">
+								{% else %}
+								<input type="checkbox" class="custom-control-input" value="{{value}}" id="{{value}}" name="permissions">
+								{% endif %}
+								<label class="custom-control-label" for="{{value}}">{{text}}</label>
+							</div>
+
+						</div>
+
+						{% endfor %}
+
+					</div>
+				</div>
+
+
+			</div>
+		</div>
+	</div>
+
+
+	{% endblock %}

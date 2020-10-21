@@ -1,0 +1,578 @@
+{% extends '_layouts/base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+	<div class="col-11 p-5">
+		<div class="row justify-content-between">
+			<div class="col-auto">
+				<h1 class="display-6">{{title}}</h1>
+			</div>
+			<div class="col-auto">
+				<button class="btn btn-primary btn-lg" type="submit" form="employee_form">Salvar</button>
+				<a href="{% url 'employee-list' %}" class="btn btn-lg btn-secondary">Voltar</a>
+			</div>
+		</div>
+		<div class="jumbotron py-4">
+
+			{% if messages %}
+			<div class="alert alert-dismissible alert-success">
+				{% for message in messages %}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				{{ message|safe }}
+				{% endfor %}
+			</div>
+			{% endif %}
+
+			<form action="{% url 'employee-detail' %}" method="POST" id="employee_form">
+
+				{% csrf_token %}
+
+				{{form.id}}
+
+				<div class="form-row">
+
+					<div class="form-group col-md col-lg">
+						<label for="full_name">Nome Completo *</label>
+						<input type="text" class="form-control {% if form.full_name.errors %} is-invalid {% endif %}" id="full_name" value="{{form.full_name.value|default_if_none:''}}" name="full_name" placeholder="Nome Completo">
+						{% for error in form.full_name.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+				</div>
+
+				<div class="form-row">
+
+					<div class="form-group col-md col-lg">
+						<label for="cpf">CPF *</label>
+						<input type="text" class="form-control {% if form.cpf.errors %} is-invalid {% endif %}" id="cpf" value="{{form.cpf.value|default_if_none:''}}" name="cpf" placeholder="000.000.000-00">
+						{% for error in form.cpf.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-md col-lg">
+						<label for="rg">RG *</label>
+						<input type="text" class="form-control {% if form.rg.errors %} is-invalid {% endif %}" id="rg" value="{{form.rg.value|default_if_none:''}}" name="rg" placeholder="00.000.000-00">
+						{% for error in form.rg.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+				</div>
+
+				<div class="form-row">
+
+					<div class="form-group col-md col-lg">
+						<label for="ctps">Carteira de Trabalho</label>
+						<input type="text" class="form-control {% if form.ctps.errors %} is-invalid {% endif %}" id="ctps" value="{{form.ctps.value|default_if_none:''}}" name="ctps" placeholder="0000000 000-0 XX">
+						{% for error in form.ctps.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-md col-lg">
+						<label for="pis">PIS</label>
+						<input type="text" class="form-control {% if form.pis.errors %} is-invalid {% endif %}" id="pis" value="{{form.pis.value|default_if_none:''}}" name="pis" placeholder="000.00000.00-0">
+						{% for error in form.pis.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+				</div>
+
+
+				<div class="form-row">
+
+					<div class="form-group col-md col-lg">
+						<label for="phone_number">Telefone</label>
+						<input type="text" class="form-control {% if form.phone_number.errors %} is-invalid {% endif %}" id="phone_number" value="{{form.phone_number.value|default_if_none:''}}" name="phone_number" placeholder="(00) 0000-0000">
+						{% for error in form.phone_number.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-md col-lg">
+						<label for="cellphone_number">Celular</label>
+						<input type="text" class="form-control {% if form.cellphone_number.errors %} is-invalid {% endif %}" id="cellphone_number" value="{{form.cellphone_number.value|default_if_none:''}}" name="cellphone_number" placeholder="(00) 00000-0000">
+						{% for error in form.cellphone_number.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-md col-lg">
+						<label for="birthdate">Data de Nascimento *</label>
+						<input type="text" class="form-control {% if form.birthdate.errors %} is-invalid {% endif %}" id="birthdate" value="{{form.birthdate.value|default_if_none:''}}" name="birthdate" placeholder="00/00/0000">
+						{% for error in form.birthdate.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+				</div>
+
+				<div class="form-row">
+
+					<div class="form-group col-md col-lg">
+						<label for="email">E-mail *</label>
+						<input type="text" class="form-control {% if form.email.errors %} is-invalid {% endif %}" id="email" value="{{form.email.value|default_if_none:''}}" name="email" placeholder="funcionario@email.com">
+						{% for error in form.email.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+				</div>
+
+				<hr>
+
+				<div class="form-row">
+
+					<div class="form-group col-md col-lg">
+						<label>Contrato *</label><br>
+						<select class="custom-select mr-2 {% if form.contract.errors %} is-invalid {% endif %}" name='contract' id='contract'>
+							<option value="">Selecione</option>
+							{% for value, text in form.contract.field.choices %}
+							<option {% if form.contract.value == value %} selected="" {% endif %} value="{{value}}">{{text}}</option>
+							{% endfor %}							
+						</select>
+						{% for error in form.contract.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>			
+
+					<div class="form-group col-md col-lg">
+						<label>Situação *</label><br>
+						<select class="custom-select mr-2 {% if form.situation.errors %} is-invalid {% endif %}" name='situation' id='situation'>
+							<option value="">Selecione</option>
+							{% for value, text in form.situation.field.choices %}
+							<option {% if form.situation.value == value %} selected="" {% endif %} value="{{value}}">{{text}}</option>
+							{% endfor %}							
+						</select>
+						{% for error in form.situation.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>			
+
+					<div class="form-group col-md col-lg">
+						<label>Tipo de Pagamento *</label><br>
+						<select class="custom-select mr-2 {% if form.payment_type.errors %} is-invalid {% endif %}" name='payment_type' id='payment_type'>
+							<option value="">Selecione</option>
+							{% for value, text in form.payment_type.field.choices %}
+							<option {% if form.payment_type.value == value %} selected="" {% endif %} value="{{value}}">{{text}}</option>
+							{% endfor %}							
+						</select>
+						{% for error in form.payment_type.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>					
+
+				</div>
+
+
+				<div class="form-row">					
+
+					<div class="form-group col-md col-lg">
+						<label>Empresa *</label><br>
+						<select class="custom-select mr-2 {% if form.company.errors %} is-invalid {% endif %}" name='company' id='company'>
+							<option value="">Selecione</option>
+							{% for value, text in form.company.field.choices %}
+							<option {% if form.company.value == value %} selected="" {% endif %} value="{{value}}">{{text}}</option>
+							{% endfor %}							
+						</select>
+						{% for error in form.company.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>					
+
+					<div class="form-group col-md col-lg">
+						<label>Centro de Custo *</label><br>
+						<select class="custom-select mr-2 {% if form.costcenter.errors %} is-invalid {% endif %}" {% if not form.company.value %} disabled='disabled' {% endif %} name='costcenter' id='costcenter'>
+							<option value="">Selecione</option>					
+							{% for value, text in form.costcenter.field.choices %}
+							<option {% if form.costcenter.value == value %} selected="" {% endif %} value="{{value}}">{{text}}</option>
+							{% endfor %}								
+						</select>
+						{% for error in form.costcenter.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>			
+
+					<!-- <div class="form-group col-md col-lg">
+					<div class="custom-control custom-checkbox mt-4">
+						{% if form.is_manager.value %}
+						<input type="checkbox" class="custom-control-input" name='is_manager' id="is_manager" checked="">
+						{% else %}
+						<input type="checkbox" class="custom-control-input" name='is_manager' id="is_manager">
+						{% endif %}
+						<label class="custom-control-label" for="is_manager">Gestor do Centro de Custo</label>
+					</div>
+				</div> -->
+
+				</div>
+
+				<div class='form-row'>
+
+					<div class="form-group col-md col-lg">
+						<label>Departamento *</label><br>
+						<select class="custom-select mr-2 {% if form.department.errors %} is-invalid {% endif %}" {% if not form.costcenter.value %} disabled='disabled' {% endif %} name='department' id='department'>
+							<option value="">Selecione</option>		
+							{% for value, text in form.department.field.choices %}
+							<option {% if form.department.value == value %} selected="" {% endif %} value="{{value}}">{{text}}</option>
+							{% endfor %}											
+						</select>
+						{% for error in form.department.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>			
+
+					<div class="form-group col-md col-lg">
+						<label>Cargo *</label><br>
+						<select class="custom-select mr-2 {% if form.function.errors %} is-invalid {% endif %}" {% if not form.department.value %} disabled='disabled' {% endif %} name='function' id='function'>
+							<option value="">Selecione</option>
+							{% for value, text in form.function.field.choices %}
+							<option {% if form.function.value == value %} selected="" {% endif %} value="{{value}}">{{text}}</option>
+							{% endfor %}							
+						</select>
+						{% for error in form.function.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>					
+
+					<div class="form-group col-md col-lg">
+						<label for="last_salary">Salário Atual</label>
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<span class="input-group-text">R$</span>
+							</div>
+							<input type="text" class="form-control {% if form.last_salary.errors %} is-invalid {% endif %}" id="last_salary" value="{{form.last_salary.value|default_if_none:''}}" 
+							name="last_salary" placeholder="0,00">
+						</div>
+						{% for error in form.last_salary.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>	
+
+				</div>
+
+				<div class="form-row">					
+
+					<div class="form-group col-md col-lg">
+						<label for="admission_date">Data de Admissão *</label>
+						<input type="text" class="form-control {% if form.admission_date.errors %} is-invalid {% endif %}" id="admission_date" value="{{form.admission_date.value|default_if_none:''}}" name="admission_date" placeholder="00/00/0000">
+						{% for error in form.birthdate.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>	
+
+					<div class="form-group col-md col-lg">
+						<label for="experience_end_date">Término de Experiencia</label>
+						<input type="text" class="form-control {% if form.experience_end_date.errors %} is-invalid {% endif %}" id="experience_end_date" value="{{form.experience_end_date.value|default_if_none:''}}" name="experience_end_date" placeholder="00/00/0000" readonly="">
+						{% for error in form.experience_end_date.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>	
+
+					<div class="form-group col-md-4 col-lg-4">
+						<label for="resignation_date">Data de Desligamento</label>
+						<input type="text" class="form-control {% if form.resignation_date.errors %} is-invalid {% endif %}" id="resignation_date" value="{{form.resignation_date.value|default_if_none:''}}" name="resignation_date" placeholder="00/00/0000">
+						{% for error in form.resignation_date.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>	
+
+				</div>
+
+				<div class="form-row">					
+
+					<div class="form-group col-md col-lg">
+						<label for="resignation_reason">Motivo do Desligamento</label>
+						<input type="text" class="form-control {% if form.resignation_reason.errors %} is-invalid {% endif %}" id="resignation_reason" value="{{form.resignation_reason.value|default_if_none:''}}" name="resignation_reason" placeholder="Motivo do Desligamento">
+						{% for error in form.resignation_reason.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>	
+
+				</div>
+				<hr>
+
+				<div class="form-row">
+
+					<div class="form-group col-md col-lg">
+						<label for="name">CEP</label>
+						<input type="text" class="form-control {% if form.post_code.errors %} is-invalid {% endif %}" id="post_code" value="{{form.post_code.value|default_if_none:''}}" name="post_code" placeholder="CEP">
+						{% for error in form.post_code.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-md col-lg">
+						<label>Estado</label><br>
+						<select class="custom-select mr-2 {% if form.state.errors %} is-invalid {% endif %}" name='state'>
+							<option value="">Selecione</option>
+							{% for value, text in form.state.field.choices %}
+							<option {% if form.state.value == value %} selected="" {% endif %} value="{{value}}">{{text}}</option>
+							{% endfor %}							
+						</select>
+						{% for error in form.state.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>			
+
+					<div class="form-group col-md col-lg">
+						<label for="city">Cidade</label>
+						<input type="text" class="form-control {% if form.city.errors %} is-invalid {% endif %}" id="city" value="{{form.city.value|default_if_none:''}}" name="city" placeholder="Cidade">
+						{% for error in form.city.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-md col-lg">
+						<label for="district">Bairro</label>
+						<input type="text" class="form-control {% if form.district.errors %} is-invalid {% endif %}" id="district" value="{{form.district.value|default_if_none:''}}" name="district" placeholder="Bairro">
+						{% for error in form.district.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+				</div>
+
+				<div class="form-row">
+
+					<div class="form-group col-md-6 col-lg-6">
+						<label for="name">Endereço</label>
+						<input type="text" class="form-control {% if form.address.errors %} is-invalid {% endif %}" id="post_code" value="{{form.address.value|default_if_none:''}}" name="address" placeholder="Endereço">
+						{% for error in form.address.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-md-1 col-lg-1">
+						<label for="company_name">Número</label>
+						<input type="text" class="form-control {% if form.number.errors %} is-invalid {% endif %}" id="number" value="{{form.number.value|default_if_none:''}}" name="number" placeholder="Nro">
+						{% for error in form.number.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-md col-lg">
+						<label for="company_name">Complemento</label>
+						<input type="text" class="form-control {% if form.complement.errors %} is-invalid {% endif %}" id="complement" value="{{form.complement.value|default_if_none:''}}" name="complement" placeholder="Complemento">
+						{% for error in form.complement.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+				</div>
+
+				<hr>
+
+				<div class="form-row">
+
+					<div class="form-group col-md col-lg">
+						<label>Banco</label><br>
+						<select class="custom-select mr-2 {% if form.bank.errors %} is-invalid {% endif %}" name='bank' id='bank'>
+							<option value="">Selecione</option>
+							{% for value, text in form.bank.field.choices %}
+							<option {% if form.bank.value == value %} selected="" {% endif %} value="{{value}}">{{text}}</option>
+							{% endfor %}							
+						</select>
+						{% for error in form.bank.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>				
+
+					<div class="form-group col-md-2 col-lg-2">
+						<label for="agency">Agência</label>
+						<input type="text" class="form-control {% if form.agency.errors %} is-invalid {% endif %}" id="agency" value="{{form.agency.value|default_if_none:''}}" name="agency" placeholder="Agência">
+						{% for error in form.agency.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-md col-lg">
+						<label for="account">Conta</label>
+						<input type="text" class="form-control {% if form.account.errors %} is-invalid {% endif %}" id="account" value="{{form.account.value|default_if_none:''}}" name="account" placeholder="Conta">
+						{% for error in form.account.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>
+
+					<div class="form-group col-md col-lg">
+						<label>Tipo de Conta</label><br>
+						<select class="custom-select mr-2 {% if form.account_type.errors %} is-invalid {% endif %}" name='account_type' id='account_type'>
+							<option value="">Selecione</option>
+							{% for value, text in form.account_type.field.choices %}
+							<option {% if form.account_type.value == value %} selected="" {% endif %} value="{{value}}">{{text}}</option>
+							{% endfor %}							
+						</select>
+						{% for error in form.account_type.errors %}
+						<p class="text-danger my-1">{{error}}</p>
+						{% endfor %}
+					</div>				
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+
+		function CheckCompany(){
+			company = $('#company').val()
+			if (company != ''){
+				$('#costcenter').prop('disabled', false)
+				$('#costcenter').empty()
+				$('#department').prop('disabled', true)
+				$('#department').val('')
+				$('#function').prop('disabled', true)
+				$('#function').val('')
+				$.get("/config/costcenter/search/" + company, function(result){
+					$('#costcenter').append('<option value="">Selecione</option>')
+					result.forEach(function(currentValue, index, arr){
+						if("{{form.costcenter.value}}" == currentValue.id){
+							$('#costcenter').append('<option selected="" value="' + currentValue.id+  '">' + currentValue.name + '</option>')
+						} else {
+							$('#costcenter').append('<option value="' + currentValue.id+  '">' + currentValue.name + '</option>')
+						}
+					})
+				})
+			} else {
+				$('#costcenter').prop('disabled', true)
+				$('#costcenter').val('')
+				$('#department').prop('disabled', true)
+				$('#department').val('')
+				$('#function').prop('disabled', true)
+				$('#function').val('')
+			}
+		}
+
+		function CheckCostCenter(){
+			costcenter = $('#costcenter').val()
+			if (costcenter != ''){
+				$('#department').prop('disabled', false)
+				$('#department').empty()
+				$('#function').prop('disabled', true)
+				$('#function').val('')
+				$.get("/config/department/search/" + costcenter, function(result){
+					$('#department').append('<option value="">Selecione</option>')
+					result.forEach(function(currentValue, index, arr){
+						if("{{form.department.value}}" == currentValue.id){
+							$('#department').append('<option selected="" value="' + currentValue.id+  '">' + currentValue.name + '</option>')
+						} else {
+							$('#department').append('<option value="' + currentValue.id+  '">' + currentValue.name + '</option>')
+						}
+					})
+				})
+			} else {
+				$('#department').prop('disabled', true)
+				$('#department').val('')
+				$('#function').prop('disabled', true)
+				$('#function').val('')
+			}
+		}
+
+		function CheckDepartment(){
+			department = $('#department').val()
+			if (costcenter != ''){
+				$('#function').prop('disabled', false)
+				$('#function').empty()
+				$.get("/config/function/search/" + department, function(result){
+					$('#function').append('<option value="">Selecione</option>')
+					result.forEach(function(currentValue, index, arr){
+						if("{{form.function.value}}" == currentValue.id){
+							$('#function').append('<option selected="" value="' + currentValue.id+  '">' + currentValue.name + '</option>')
+						} else {
+							$('#function').append('<option value="' + currentValue.id+  '">' + currentValue.name + '</option>')
+						}
+					})
+				})
+			} else {
+				$('#function').prop('disabled', true)
+				$('#function').val('')
+			}
+		}
+
+		function GetSalary(){
+			function_sel = $('#function').val()
+			if (function_sel != ''){
+				$.get("/config/function/get-salary/" + function_sel, function(result){
+					$('#last_salary').val(result)
+					$('#last_salary').trigger('mask.maskMoney')
+				})
+			} else {
+			}
+		}
+
+		function SumDays(original_date){
+			arr = original_date.split('/')
+			day = parseInt(arr[0])
+			month = parseInt(arr[1])
+			year = parseInt(arr[2])
+			var d = new Date(year + '-' + month + '-' + day);
+			
+		    var date = new Date(d);
+		    var newdate = new Date(date);
+
+		    newdate.setDate(newdate.getDate() + 90);
+		    
+		    var dd = newdate.getDate().toString();
+		    var mm = (newdate.getMonth() + 1).toString();
+		    var y = newdate.getFullYear().toString();
+
+		    if (dd.length < 2){
+		    	dd = '0' + dd
+		    }
+
+		    if (mm.length < 2){
+		    	mm = '0' + mm
+		    }
+
+		    var someFormattedDate = dd + '/' + mm + '/' + y;
+
+			$('#experience_end_date').val(someFormattedDate)
+		}
+
+		$('#admission_date').focusout(function(){
+			SumDays($('#admission_date').val())
+		})
+
+		$('#company').change(function(){
+			CheckCompany()
+		})
+		
+		$('#costcenter').change(function(){
+			CheckCostCenter()
+		})
+
+		$('#department').change(function(){
+			CheckDepartment()
+		})
+
+		$('#function').change(function(){
+			GetSalary()
+		})
+
+		$(document).ready(function(){
+			//mask
+			$('#cpf').mask('000.000.000-00')
+			$('#rg').mask('00.000.000-0')
+			$('#phone_number').mask('(00) 0000-0000')
+			$('#cellphone_number').mask('(00) 00000-0000')
+			$('#ctps').mask('0000000 000-0 SS')
+			$('#pis').mask('000.00000.00-0')
+			$('#birthdate').mask('00/00/0000')
+			$('#admission_date').mask('00/00/0000')
+			$('#resignation_date').mask('00/00/0000')
+			$('#post_code').mask('00000-000')
+			$('#number').mask('000000000')
+			$('#last_salary').maskMoney({
+				thousands: '.', 
+				decimal: ','
+			});
+		})
+
+	</script>
+
+
+	{% endblock %}
